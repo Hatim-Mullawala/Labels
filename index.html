@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Mobile App Viewport & Standalone PWA Meta Tags -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0F2C59">
+  <title>Hatimi Hardware — Smart Label Studio</title>
+  <style>
+    :root {
+      --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --navy: #0F2C59;
+      --gold: #D4AF37;
+      --amber: #F59E0B;
+      --teal: #0F766E;
+      --charcoal: #111827;
+      --bg-app: #F1F5F9;
+      --card-bg: #FFFFFF;
+      --border-color: #CBD5E1;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent; /* Removes blue tap flash on mobile */
+    }
+
+    body {
+      font-family: var(--font-stack);
+      background-color: var(--bg-app);
+      color: var(--charcoal);
+      padding: 20px;
+      padding-bottom: 80px; /* Breathing room for mobile bottom nav */
+    }
+
+    /* Top App Header (Hidden when printing) */
+    .app-header {
+      max-width: 1400px;
+      margin: 0 auto 20px auto;
+      background: var(--navy);
+      color: #FFFFFF;
+      padding: 20px 30px;
+      border-radius: 8px;
+      border-bottom: 4px solid var(--gold);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+
+    .app-header h1 {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .app-header p {
+      font-size: 13px;
+      color: #E2E8F0;
+      margin-top: 4px;
+    }
+
+    /* Main Workspace Layout (Desktop Default) */
+    .workspace {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 25px;
+      align-items: start;
+    }
+
+    /* Left Column: Data Entry Form */
+    .form-panel {
+      background: var(--card-bg);
+      padding: 25px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 20px;
+    }
+
+    .form-panel h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #E2E8F0;
+      color: var(--navy);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #475569;
+    }
+
+    .optional-tag {
+      font-weight: 400;
+      color: #94A3B8;
+      font-size: 11px;
+    }
+
+    .lock-label {
+      font-size: 11px !important;
+      color: var(--navy) !important;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #E2E8F0;
+      padding: 4px 8px;
+      border-radius: 4px;
+      user-select: none;
+    }
+
+    /* Form Controls with Enhanced Mobile Touch Target Heights */
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.2s;
+      background: #FFFFFF;
+    }
+
+    .form-control:focus {
+      border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(15, 44, 89, 0.1);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn-add {
+      width: 100%;
+      padding: 14px;
+      background-color: var(--navy);
+      color: #FFFFFF;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.2s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .btn-add:hover {
+      background-color: #1E3A8A;
+    }
+
+    .btn-print {
+      background-color: var(--gold);
+      color: #000000;
+      padding: 12px 20px;
+      font-size: 15px;
+      font-weight: 800;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-print:hover {
+      background-color: #FAC838;
+    }
+
+    .btn-clear {
+      width: 100%;
+      padding: 12px;
+      background-color: transparent;
+      color: #DC2626;
+      font-size: 14px;
+      font-weight: 600;
+      border: 1px dashed #DC2626;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.2s;
+    }
+
+    .btn-clear:hover {
+      background-color: #FEF2F2;
+    }
+
+    /* Custom Professional Confirmation Modal Overlay */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease-in-out;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      background: #FFFFFF;
+      width: 100%;
+      max-width: 400px;
+      border-radius: 12px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transform: scale(0.95);
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      background: #FEF2F2;
+      padding: 16px 20px;
+      border-bottom: 1px solid #FEE2E2;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .modal-icon {
+      background: #DC2626;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .modal-header h3 {
+      font-size: 17px;
+      font-weight: 800;
+      color: #991B1B;
+    }
+
+    .modal-body {
+      padding: 20px;
+      font-size: 14px;
+      color: #475569;
+      line-height: 1.5;
+    }
+
+    .modal-footer {
+      padding: 14px 20px;
+      background: #F8FAFC;
+      border-top: 1px solid #E2E8F0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .btn-modal-cancel {
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #475569;
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-modal-confirm {
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #FFFFFF;
+      background: #DC2626;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* Right Column: Live Preview & Grid Controls */
+    .preview-panel {
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      min-height: 800px;
+    }
+
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #E2E8F0;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .preview-header h2 {
+      font-size: 18px;
+      color: var(--navy);
+    }
+
+    .grid-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #F8FAFC;
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+
+    .grid-controls label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .grid-controls select {
+      padding: 6px 10px;
+      font-weight: 700;
+      border-radius: 4px;
+      border: 1px solid #CBD5E1;
+      background: white;
+      cursor: pointer;
+    }
+
+    /* The Dynamic Grid Container */
+    .label-grid {
+      display: grid;
+      width: 100%;
+    }
+
+    .grid-cols-3 { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .grid-cols-4 { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .grid-cols-5 { grid-template-columns: repeat(5, 1fr); gap: 6px; }
+    .grid-cols-6 { grid-template-columns: repeat(6, 1fr); gap: 5px; }
+
+    /* Individual Sticker Card Styling */
+    .sticker-card {
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
+      overflow: hidden; 
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      position: relative;
+      transition: all 0.15s;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .sticker-card:hover .btn-delete {
+      opacity: 1;
+    }
+
+    .btn-delete {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(220, 38, 38, 0.9);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .dept-bar {
+      padding: 3px 8px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #FFFFFF;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 18px;
+      flex-shrink: 0;
+    }
+
+    .theme-hardware { background-color: var(--navy); border-bottom: 2px solid var(--gold); }
+    .theme-tools { background-color: #343A40; border-bottom: 2px solid var(--amber); }
+    .theme-bath { background-color: var(--teal); border-bottom: 2px solid #5EEAD4; }
+    .theme-none { display: none !important; }
+
+    .product-info {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      width: 100%;
+      padding: 8px;
+    }
+
+    .product-name {
+      font-weight: 900;
+      color: var(--charcoal);
+      line-height: 1.1;
+      word-wrap: break-word;
+      width: 100%;
+    }
+
+    .spec-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    .product-spec {
+      font-weight: 800;
+      color: #0F172A;
+      background-color: #E2E8F0;
+      border-radius: 4px;
+      display: inline-block;
+      border: 1px solid #CBD5E1;
+      max-width: 98%;
+      word-wrap: break-word;
+    }
+
+    .cust-badge {
+      font-weight: 800;
+      color: #9A3412;
+      background-color: #FFEDD5;
+      border: 1px solid #FB923C;
+      border-radius: 4px;
+      display: inline-block;
+      word-wrap: break-word;
+    }
+
+    /* Responsive Grid Scaling Engine (Desktop & Print Standard) */
+    .grid-cols-3 .sticker-card { height: 140px; }
+    .grid-cols-3 .emp-name .product-name { font-size: 26px; margin-bottom: 6px; }
+    .grid-cols-3 .emp-name .product-spec { font-size: 18px; padding: 3px 14px; }
+    .grid-cols-3 .emp-name .cust-badge { font-size: 14px; padding: 2px 10px; }
+    .grid-cols-3 .emp-size .product-name { font-size: 17px; color: #475569; margin-bottom: 4px; font-weight: 700; }
+    .grid-cols-3 .emp-size .product-spec { font-size: 26px; padding: 4px 16px; background-color: #FEF08A; border-color: #EAB308; }
+    .grid-cols-3 .emp-size .cust-badge { font-size: 16px; padding: 3px 12px; }
+
+    .grid-cols-4 .sticker-card { height: 115px; }
+    .grid-cols-4 .emp-name .product-name { font-size: 19px; margin-bottom: 4px; }
+    .grid-cols-4 .emp-name .product-spec { font-size: 14px; padding: 2px 10px; }
+    .grid-cols-4 .emp-name .cust-badge { font-size: 12px; padding: 2px 8px; }
+    .grid-cols-4 .emp-size .product-name { font-size: 13px; color: #475569; margin-bottom: 3px; font-weight: 700; }
+    .grid-cols-4 .emp-size .product-spec { font-size: 20px; padding: 3px 12px; background-color: #FEF08A; border-color: #EAB308; }
+    .grid-cols-4 .emp-size .cust-badge { font-size: 13px; padding: 2px 10px; }
+
+    .grid-cols-5 .sticker-card { height: 95px; }
+    .grid-cols-5 .dept-bar { font-size: 8px; padding: 2px 6px; min-height: 14px; }
+    .grid-cols-5 .product-info { padding: 4px; }
+    .grid-cols-5 .emp-name .product-name { font-size: 15px; margin-bottom: 3px; }
+    .grid-cols-5 .emp-name .product-spec { font-size: 12px; padding: 1px 8px; }
+    .grid-cols-5 .emp-name .cust-badge { font-size: 10px; padding: 1px 6px; }
+    .grid-cols-5 .emp-size .product-name { font-size: 11px; color: #475569; margin-bottom: 2px; font-weight: 700; }
+    .grid-cols-5 .emp-size .product-spec { font-size: 16px; padding: 2px 8px; background-color: #FEF08A; border-color: #EAB308; }
+    .grid-cols-5 .emp-size .cust-badge { font-size: 11px; padding: 1px 6px; }
+
+    .grid-cols-6 .sticker-card { height: 78px; border-radius: 4px; }
+    .grid-cols-6 .dept-bar span { display: none; }
+    .grid-cols-6 .dept-bar { min-height: 5px; padding: 0; border-bottom: none; }
+    .grid-cols-6 .product-info { padding: 2px; }
+    .grid-cols-6 .spec-container { gap: 2px; margin-top: 2px; }
+    .grid-cols-6 .emp-name .product-name { font-size: 13px; margin-bottom: 2px; line-height: 1.1; }
+    .grid-cols-6 .emp-name .product-spec { font-size: 10px; padding: 1px 5px; border-radius: 3px; }
+    .grid-cols-6 .emp-name .cust-badge { font-size: 9px; padding: 1px 4px; border-radius: 3px; }
+    .grid-cols-6 .emp-size .product-name { font-size: 9px; color: #475569; margin-bottom: 1px; font-weight: 700; line-height: 1; }
+    .grid-cols-6 .emp-size .product-spec { font-size: 13px; padding: 1px 5px; background-color: #FEF08A; border-color: #EAB308; border-radius: 3px; }
+    .grid-cols-6 .emp-size .cust-badge { font-size: 10px; padding: 1px 4px; border-radius: 3px; }
+
+    .empty-state {
+      grid-column: span 6;
+      text-align: center;
+      padding: 60px 20px;
+      color: #94A3B8;
+      font-size: 16px;
+      border: 2px dashed #CBD5E1;
+      border-radius: 8px;
+    }
+
+    /* Fixed Bottom Mobile Navigation Bar (Hidden on Desktop!) */
+    .mobile-nav {
+      display: none;
+    }
+
+    /* =========================================================================
+       MOBILE & TABLET RESPONSIVE ENGINE (Max Width: 900px)
+       ========================================================================= */
+    @media screen and (max-width: 900px) {
+      body {
+        padding: 10px;
+        padding-bottom: 85px; /* Space for fixed bottom bar */
+      }
+
+      .app-header {
+        padding: 15px;
+        margin-bottom: 15px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .btn-print {
+        width: 100%;
+        justify-content: center;
+        padding: 14px;
+        font-size: 16px;
+      }
+
+      /* Stack workspace into a single column */
+      .workspace {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      /* Remove sticky positioning on mobile so it acts like a native view */
+      .form-panel {
+        position: static;
+        padding: 18px;
+      }
+
+      .preview-panel {
+        padding: 18px;
+        min-height: auto;
+      }
+
+      /* On mobile screens, default preview cards to 2 columns for readability */
+      .grid-cols-3, .grid-cols-4, .grid-cols-5, .grid-cols-6 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+
+      /* Ensure touch delete buttons are visible on touchscreen without hovering */
+      .btn-delete {
+        opacity: 0.85;
+        width: 28px;
+        height: 28px;
+        top: 6px;
+        right: 6px;
+      }
+
+      /* Enable Fixed Bottom App Navigation Bar */
+      .mobile-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: #FFFFFF;
+        border-top: 1px solid #CBD5E1;
+        box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+        z-index: 999;
+      }
+
+      .mobile-nav-btn {
+        flex: 1;
+        padding: 12px;
+        background: none;
+        border: none;
+        font-size: 14px;
+        font-weight: 800;
+        color: #64748B;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .mobile-nav-btn.active {
+        color: var(--navy);
+        background: #F8FAFC;
+        border-top: 3px solid var(--gold);
+      }
+
+      /* Mobile View Switching Classes */
+      .mobile-hide {
+        display: none !important;
+      }
+    }
+
+    /* =========================================================================
+       PRINT MEDIA QUERY: STRICT A4 GEOMETRY (Ignores Mobile Screen Rules!)
+       ========================================================================= */
+    @page { size: A4 portrait; margin: 6mm; }
+
+    @media print {
+      body { background-color: #FFFFFF; padding: 0; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .app-header, .form-panel, .preview-header, .btn-delete, .modal-overlay, .mobile-nav { display: none !important; }
+      .workspace { display: block; max-width: 100%; margin: 0; }
+      .preview-panel { padding: 0; border: none; box-shadow: none; display: block !important; }
+      
+      /* Restore exact multi-column print grid on paper regardless of mobile view */
+      .label-grid { display: grid; width: 100%; }
+      .grid-cols-3 { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
+      .grid-cols-4 { grid-template-columns: repeat(4, 1fr) !important; gap: 6px !important; }
+      .grid-cols-5 { grid-template-columns: repeat(5, 1fr) !important; gap: 5px !important; }
+      .grid-cols-6 { grid-template-columns: repeat(6, 1fr) !important; gap: 4px !important; }
+      
+      .sticker-card { border: 1px solid #1E293B; page-break-inside: avoid; box-shadow: none; }
+      .grid-cols-3 .sticker-card { height: 135px; }
+      .grid-cols-4 .sticker-card { height: 110px; }
+      .grid-cols-5 .sticker-card { height: 90px; }
+      .grid-cols-6 .sticker-card { height: 75px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom Confirmation Modal Overlay -->
+  <div id="confirmModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-icon">!</div>
+        <h3>Clear Print Queue?</h3>
+      </div>
+      <div class="modal-body">
+        You are about to remove all labels from the current A4 sheet. This action cannot be undone.
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-modal-confirm" onclick="confirmClear()">Yes, Clear Sheet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Navigation / Brand Bar -->
+  <header class="app-header">
+    <div>
+      <h1>HATIMI HARDWARE</h1>
+      <p>Smart Rack Label Studio — Native Responsive Edition</p>
+    </div>
+    <button class="btn-print" onclick="window.print()">🖨️ Print A4 Sticker Sheet</button>
+  </header>
+
+  <div class="workspace">
+    
+    <!-- Left Column: Interactive Form (View 1 on Mobile) -->
+    <aside id="panelForm" class="form-panel">
+      <h2>Add New Rack Label</h2>
+      <form id="labelForm" onsubmit="addLabel(event)">
+        
+        <div class="form-group">
+          <label>Visual Emphasis Priority <span style="color:#DC2626;">*</span></label>
+          <select id="empMode" class="form-control" style="font-weight: 800; color: var(--navy);">
+            <option value="emp-name">Make Product Name Bigger (Standard Hardware)</option>
+            <option value="emp-size">Make Size / Spec Bigger (Fasteners, Bits & Nails)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Department Theme Accent <span class="optional-tag">(Optional)</span></label>
+          <select id="deptTheme" class="form-control">
+            <option value="theme-none">None / Plain White (No Accent Line)</option>
+            <option value="theme-hardware">Furniture Fittings (Navy & Gold)</option>
+            <option value="theme-tools">Hand Tools (Charcoal & Amber)</option>
+            <option value="theme-bath">Bathroom Essentials (Teal Accent)</option>
+          </select>
+        </div>
+
+        <!-- Optional Category & Brand -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Category <span class="optional-tag">(Optional)</span></label>
+            <input type="text" id="categoryName" class="form-control" placeholder="e.g. Bolts">
+          </div>
+          <div class="form-group">
+            <label>Brand <span class="optional-tag">(Optional)</span></label>
+            <input type="text" id="brandName" class="form-control" placeholder="e.g. TVS">
+          </div>
+        </div>
+
+        <!-- Required Main Product Info with LOCK Checkbox -->
+        <div class="form-group">
+          <label>
+            <span>Product Generic Name <span style="color:#DC2626;">*</span></span>
+            <label class="lock-label">
+              <input type="checkbox" id="lockName" checked> 🔒 Keep Name
+            </label>
+          </label>
+          <input type="text" id="productName" class="form-control" placeholder="e.g. Hex Bolt" required autofocus>
+        </div>
+
+        <!-- Dual Size Format Inputs (Supports Commas for Batching!) -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Shop Size(s) / Sut <span style="color:#DC2626;">*</span></label>
+            <input type="text" id="productSpec" class="form-control" placeholder="e.g. 1&quot;, 1.5&quot;, 2&quot; (Use commas!)" required>
+          </div>
+          <div class="form-group">
+            <label>Bolt No.(s) <span class="optional-tag">(Optional)</span></label>
+            <input type="text" id="custNo" class="form-control" placeholder="e.g. 8no, 10no, 12no">
+          </div>
+        </div>
+        <small style="color: #64748B; font-size: 11px; display: block; margin-top: -8px; margin-bottom: 12px;">
+          💡 Tip: Type multiple sizes separated by commas to add them all at once!
+        </small>
+
+        <button type="submit" class="btn-add">+ Add to Print Queue</button>
+        <button type="button" class="btn-clear" onclick="openModal()">Clear Entire Sheet</button>
+      </form>
+    </aside>
+
+    <!-- Right Column: Live Preview & Grid Controls (View 2 on Mobile) -->
+    <main id="panelPreview" class="preview-panel">
+      <div class="preview-header">
+        <div>
+          <h2>Live A4 Print Preview (<span id="countDisplay">0</span> Labels Ready)</h2>
+          <small style="color: #64748B;">Layout automatically scales to prevent edge-cutting</small>
+        </div>
+        
+        <!-- Grid Column Selector -->
+        <div class="grid-controls">
+          <label for="colSelect">Stickers per Row:</label>
+          <select id="colSelect" onchange="changeColumns()">
+            <option value="grid-cols-3">3 Columns (Large Cards)</option>
+            <option value="grid-cols-4">4 Columns (Medium Cards)</option>
+            <option value="grid-cols-5">5 Columns (Compact Cards)</option>
+            <option value="grid-cols-6">6 Columns (Mini Bin Labels)</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="labelGrid" class="label-grid grid-cols-3">
+        <div class="empty-state" id="emptyState">
+          No labels added yet. Fill out the form on the left and click "+ Add to Print Queue" to start building your sheet.
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Mobile Fixed Bottom App Navigation Bar -->
+  <nav class="mobile-nav">
+    <button id="navFormBtn" class="mobile-nav-btn active" onclick="switchMobileTab('form')">
+      <span style="font-size: 18px;">📝</span>
+      <span>Add Labels</span>
+    </button>
+    <button id="navPreviewBtn" class="mobile-nav-btn" onclick="switchMobileTab('preview')">
+      <span style="font-size: 18px;">🏷️</span>
+      <span>Live Preview (<strong id="mobileCountDisplay">0</strong>)</span>
+    </button>
+  </nav>
+
+  <script>
+    // Initial Queue
+    let labelQueue = [
+      { id: Date.now() + 1, emphasis: 'emp-size', theme: 'theme-tools', category: 'Hex Bolts', brand: 'TVS', name: 'Machine Bolt', spec: '1.5 Sut x 1"', custNo: '8no' },
+      { id: Date.now() + 2, emphasis: 'emp-size', theme: 'theme-tools', category: 'Hex Bolts', brand: 'TVS', name: 'Machine Bolt', spec: '1.5 Sut x 1.5"', custNo: '10no' },
+      { id: Date.now() + 3, emphasis: 'emp-size', theme: 'theme-tools', category: 'Hex Bolts', brand: 'TVS', name: 'Machine Bolt', spec: '1.5 Sut x 2"', custNo: '12no' }
+    ];
+
+    function renderGrid() {
+      const grid = document.getElementById('labelGrid');
+      const countDisplay = document.getElementById('countDisplay');
+      const mobileCountDisplay = document.getElementById('mobileCountDisplay');
+      
+      grid.innerHTML = '';
+      countDisplay.innerText = labelQueue.length;
+      mobileCountDisplay.innerText = labelQueue.length;
+
+      if (labelQueue.length === 0) {
+        grid.innerHTML = '<div class="empty-state">No labels in queue. Add products using the left panel.</div>';
+        return;
+      }
+
+      labelQueue.forEach(item => {
+        const card = document.createElement('div');
+        card.className = `sticker-card ${item.emphasis}`;
+        
+        let topBarHtml = '';
+        if (item.theme !== 'theme-none' || item.category || item.brand) {
+          topBarHtml = `
+            <div class="dept-bar ${item.theme !== 'theme-none' ? item.theme : 'theme-hardware'}">
+              <span>${item.category || ''}</span>
+              <span>${item.brand || ''}</span>
+            </div>
+          `;
+        }
+
+        let custBadgeHtml = '';
+        if (item.custNo && item.custNo.trim() !== '') {
+          custBadgeHtml = `<div class="cust-badge">${item.custNo}</div>`;
+        }
+
+        card.innerHTML = `
+          <button class="btn-delete" onclick="deleteLabel(${item.id})" title="Remove Label">×</button>
+          ${topBarHtml}
+          <div class="product-info">
+            <div class="product-name">${item.name}</div>
+            <div class="spec-container">
+              <div class="product-spec">${item.spec}</div>
+              ${custBadgeHtml}
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function changeColumns() {
+      const grid = document.getElementById('labelGrid');
+      const selectedColClass = document.getElementById('colSelect').value;
+      grid.className = `label-grid ${selectedColClass}`;
+    }
+
+    // Batch Processing Engine
+    function addLabel(e) {
+      e.preventDefault();
+      
+      const emp = document.getElementById('empMode').value;
+      const theme = document.getElementById('deptTheme').value;
+      const category = document.getElementById('categoryName').value.trim();
+      const brand = document.getElementById('brandName').value.trim().toUpperCase();
+      const name = document.getElementById('productName').value.trim();
+      
+      const sizes = document.getElementById('productSpec').value.split(',').map(s => s.trim()).filter(s => s !== '');
+      const numbers = document.getElementById('custNo').value.split(',').map(n => n.trim());
+      
+      sizes.forEach((size, index) => {
+        const num = numbers[index] || numbers[0] || '';
+        labelQueue.push({
+          id: Date.now() + Math.random(),
+          emphasis: emp,
+          theme: theme,
+          category: category,
+          brand: brand,
+          name: name,
+          spec: size,
+          custNo: num
+        });
+      });
+
+      renderGrid();
+      
+      const isLocked = document.getElementById('lockName').checked;
+      if (!isLocked) {
+        document.getElementById('productName').value = '';
+      }
+      
+      document.getElementById('productSpec').value = '';
+      document.getElementById('custNo').value = '';
+      
+      if (isLocked) {
+        document.getElementById('productSpec').focus();
+      } else {
+        document.getElementById('productName').focus();
+      }
+
+      // On mobile devices, flash the preview tab button so the user knows labels were added
+      if (window.innerWidth <= 900) {
+        const previewBtn = document.getElementById('navPreviewBtn');
+        previewBtn.style.backgroundColor = '#FEF08A';
+        setTimeout(() => { previewBtn.style.backgroundColor = ''; }, 400);
+      }
+    }
+
+    function deleteLabel(id) {
+      labelQueue = labelQueue.filter(item => item.id !== id);
+      renderGrid();
+    }
+
+    function openModal() {
+      if (labelQueue.length === 0) return;
+      document.getElementById('confirmModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('confirmModal').classList.remove('active');
+    }
+
+    function confirmClear() {
+      labelQueue = [];
+      renderGrid();
+      closeModal();
+    }
+
+    // Mobile App Tab Navigation Switcher
+    function switchMobileTab(tab) {
+      const formPanel = document.getElementById('panelForm');
+      const previewPanel = document.getElementById('panelPreview');
+      const btnForm = document.getElementById('navFormBtn');
+      const btnPreview = document.getElementById('navPreviewBtn');
+
+      if (tab === 'form') {
+        formPanel.classList.remove('mobile-hide');
+        previewPanel.classList.add('mobile-hide');
+        btnForm.classList.add('active');
+        btnPreview.classList.remove('active');
+      } else {
+        formPanel.classList.add('mobile-hide');
+        previewPanel.classList.remove('mobile-hide');
+        btnForm.classList.remove('active');
+        btnPreview.classList.add('active');
+      }
+    }
+
+    // Auto-detect screen width on load to initialize mobile tab state if opened on phone
+    function initResponsiveLayout() {
+      if (window.innerWidth <= 900) {
+        switchMobileTab('form'); // Default to Add Labels form on mobile launch
+      } else {
+        // Ensure both panels are visible on desktop laptop screens
+        document.getElementById('panelForm').classList.remove('mobile-hide');
+        document.getElementById('panelPreview').classList.remove('mobile-hide');
+      }
+    }
+
+    window.addEventListener('resize', initResponsiveLayout);
+    window.onload = () => {
+      renderGrid();
+      initResponsiveLayout();
+    };
+  </script>
+</body>
+</html>
