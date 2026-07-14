@@ -762,6 +762,21 @@
       .grid-cols-6 .emp-size .product-spec { font-size: 12px !important; padding: 1px 4px !important; }
       .grid-cols-6 .emp-size .cust-badge { font-size: 9px !important; }
     }
+    /* =========================================================================
+       AUTO-CAPITALIZATION ENGINE (Title Case for Names, Brands & Categories)
+       ========================================================================= */
+
+    /* 1. Capitalize the printed text on the sticker cards */
+    .product-name, 
+    .dept-bar span {
+      text-transform: capitalize;
+    }
+
+    /* 2. Capitalize the text inside your typing input boxes on the left panel */
+    input[type="text"], 
+    .form-panel input {
+      text-transform: capitalize;
+    }
   </style>
 </head>
 <body>
