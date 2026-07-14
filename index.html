@@ -435,16 +435,16 @@
     .theme-bath { background-color: var(--teal); border-bottom: 2px solid #5EEAD4; }
     .theme-none { display: none !important; }
 
-    .product-info {
+   .product-info {
       flex-grow: 1;
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-rows: auto 1fr auto; /* Top: Name | Middle: Size | Bottom: Cust No */
       align-items: center;
-      justify-content: center;
-      text-align: center;
-      overflow: hidden;
+      justify-items: center;
       width: 100%;
-      padding: 8px;
+      padding: 6px 8px;
+      overflow: hidden;
+      gap: 2px;
     }
 
     .product-name {
@@ -452,19 +452,18 @@
       color: var(--charcoal);
       line-height: 1.1;
       word-wrap: break-word;
+      text-align: center;
       width: 100%;
     }
 
     .spec-container {
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 4px;
       width: 100%;
-      margin-top: 4px;
+      height: 100%;
+      overflow: hidden;
     }
-
     .product-spec {
       font-weight: 800;
       color: #0F172A;
@@ -486,45 +485,102 @@
       word-wrap: break-word;
     }
 
-    /* Responsive Grid Scaling Engine (Desktop & Print Standard) */
+    /* =========================================================================
+       DYNAMIC SCALE ENGINE: Harmonized Pro Sizing & Uniform Box Widths
+       ========================================================================= */
+
+    .emp-size .spec-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      width: 100%;
+      padding: 0 4px;
+    }
+    
+    .emp-size .product-spec {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 85%; /* NEW: Forces all yellow boxes to stretch uniformly! */
+      padding: 4px 10px;
+      background-color: #FEF08A; 
+      border: 2px solid #EAB308;
+      border-radius: 6px;
+      line-height: 1.05;
+      text-align: center;
+      word-wrap: break-word;
+      max-width: 98%;
+      max-height: 100%;
+      letter-spacing: 0.5px;
+      word-spacing: 3px;
+      font-weight: 900;
+      transition: all 0.2s ease;
+    }
+
+    /* --- 3 COLUMNS (Large Cards - Standard A4 Height: 140px) --- */
     .grid-cols-3 .sticker-card { height: 140px; }
-    .grid-cols-3 .emp-name .product-name { font-size: 26px; margin-bottom: 6px; }
-    .grid-cols-3 .emp-name .product-spec { font-size: 18px; padding: 3px 14px; }
-    .grid-cols-3 .emp-name .cust-badge { font-size: 14px; padding: 2px 10px; }
-    .grid-cols-3 .emp-size .product-name { font-size: 17px; color: #475569; margin-bottom: 4px; font-weight: 700; }
-    .grid-cols-3 .emp-size .product-spec { font-size: 26px; padding: 4px 16px; background-color: #FEF08A; border-color: #EAB308; }
-    .grid-cols-3 .emp-size .cust-badge { font-size: 16px; padding: 3px 12px; }
+    .grid-cols-3 .emp-name .product-name { font-size: 24px; }
+    .grid-cols-3 .emp-name .product-spec { font-size: 16px; padding: 4px 12px; min-width: auto; }
+    .grid-cols-3 .emp-name .cust-badge { font-size: 13px; padding: 2px 8px; }
+    
+    /* BOOSTED STANDARD SIZE: Bumped from 24px up to 32px! */
+    .grid-cols-3 .emp-size .product-name { font-size: 13px; color: #475569; font-weight: 800; }
+    .grid-cols-3 .emp-size .product-spec { font-size: 32px; padding: 6px 14px; } 
+    .grid-cols-3 .emp-size .cust-badge { font-size: 12px; padding: 2px 8px; }
+    
+    /* ULTRA-SIZE: Subtle boost to 36px instead of a jarring jump */
+    .grid-cols-3 .ultra-size .product-name { font-size: 16px; }
+    .grid-cols-3 .ultra-size .product-spec { font-size: 36px !important; padding: 8px 16px !important; }
 
+    /* --- 4 COLUMNS (Medium Cards - Standard A4 Height: 115px) --- */
     .grid-cols-4 .sticker-card { height: 115px; }
-    .grid-cols-4 .emp-name .product-name { font-size: 19px; margin-bottom: 4px; }
-    .grid-cols-4 .emp-name .product-spec { font-size: 14px; padding: 2px 10px; }
-    .grid-cols-4 .emp-name .cust-badge { font-size: 12px; padding: 2px 8px; }
-    .grid-cols-4 .emp-size .product-name { font-size: 13px; color: #475569; margin-bottom: 3px; font-weight: 700; }
-    .grid-cols-4 .emp-size .product-spec { font-size: 20px; padding: 3px 12px; background-color: #FEF08A; border-color: #EAB308; }
-    .grid-cols-4 .emp-size .cust-badge { font-size: 13px; padding: 2px 10px; }
+    .grid-cols-4 .emp-name .product-name { font-size: 18px; }
+    .grid-cols-4 .emp-name .product-spec { font-size: 13px; padding: 2px 8px; min-width: auto; }
+    .grid-cols-4 .emp-name .cust-badge { font-size: 11px; padding: 2px 6px; }
+    
+    /* BOOSTED STANDARD SIZE: Bumped from 18px up to 23px! */
+    .grid-cols-4 .emp-size .product-name { font-size: 12px; color: #475569; font-weight: 800; }
+    .grid-cols-4 .emp-size .product-spec { font-size: 23px; padding: 4px 10px; }
+    .grid-cols-4 .emp-size .cust-badge { font-size: 11px; padding: 1px 6px; }
+    
+    /* ULTRA-SIZE */
+    .grid-cols-4 .ultra-size .product-name { font-size: 14px; }
+    .grid-cols-4 .ultra-size .product-spec { font-size: 26px !important; padding: 6px 12px !important; }
 
+    /* --- 5 COLUMNS (Compact Cards) --- */
     .grid-cols-5 .sticker-card { height: 95px; }
     .grid-cols-5 .dept-bar { font-size: 8px; padding: 2px 6px; min-height: 14px; }
     .grid-cols-5 .product-info { padding: 4px; }
-    .grid-cols-5 .emp-name .product-name { font-size: 15px; margin-bottom: 3px; }
-    .grid-cols-5 .emp-name .product-spec { font-size: 12px; padding: 1px 8px; }
+    .grid-cols-5 .emp-name .product-name { font-size: 15px; margin-bottom: 2px; line-height: 1.1; }
+    .grid-cols-5 .emp-name .product-spec { font-size: 12px; padding: 2px 8px; min-width: auto; }
     .grid-cols-5 .emp-name .cust-badge { font-size: 10px; padding: 1px 6px; }
-    .grid-cols-5 .emp-size .product-name { font-size: 11px; color: #475569; margin-bottom: 2px; font-weight: 700; }
-    .grid-cols-5 .emp-size .product-spec { font-size: 16px; padding: 2px 8px; background-color: #FEF08A; border-color: #EAB308; }
-    .grid-cols-5 .emp-size .cust-badge { font-size: 11px; padding: 1px 6px; }
+    
+    /* BOOSTED STANDARD SIZE: Bumped from 17px up to 20px! */
+    .grid-cols-5 .emp-size .product-name { font-size: 10px; color: #475569; margin-bottom: 1px; font-weight: 800; }
+    .grid-cols-5 .emp-size .product-spec { font-size: 20px; padding: 3px 8px; }
+    .grid-cols-5 .emp-size .cust-badge { font-size: 9px; padding: 1px 6px; }
+    
+    /* ULTRA-SIZE */
+    .grid-cols-5 .ultra-size .product-spec { font-size: 23px !important; padding: 4px 10px !important; }
 
+    /* --- 6 COLUMNS (Mini Cards) --- */
     .grid-cols-6 .sticker-card { height: 78px; border-radius: 4px; }
     .grid-cols-6 .dept-bar span { display: none; }
     .grid-cols-6 .dept-bar { min-height: 5px; padding: 0; border-bottom: none; }
     .grid-cols-6 .product-info { padding: 2px; }
-    .grid-cols-6 .spec-container { gap: 2px; margin-top: 2px; }
-    .grid-cols-6 .emp-name .product-name { font-size: 13px; margin-bottom: 2px; line-height: 1.1; }
-    .grid-cols-6 .emp-name .product-spec { font-size: 10px; padding: 1px 5px; border-radius: 3px; }
-    .grid-cols-6 .emp-name .cust-badge { font-size: 9px; padding: 1px 4px; border-radius: 3px; }
-    .grid-cols-6 .emp-size .product-name { font-size: 9px; color: #475569; margin-bottom: 1px; font-weight: 700; line-height: 1; }
-    .grid-cols-6 .emp-size .product-spec { font-size: 13px; padding: 1px 5px; background-color: #FEF08A; border-color: #EAB308; border-radius: 3px; }
-    .grid-cols-6 .emp-size .cust-badge { font-size: 10px; padding: 1px 4px; border-radius: 3px; }
-
+    .grid-cols-6 .spec-container { gap: 2px; margin-top: 1px; }
+    
+    .grid-cols-6 .emp-name .product-name { font-size: 12px; margin-bottom: 1px; line-height: 1.1; }
+    .grid-cols-6 .emp-name .product-spec { font-size: 10px; padding: 1px 4px; border-radius: 3px; min-width: auto; }
+    .grid-cols-6 .emp-name .cust-badge { font-size: 8px; padding: 1px 3px; border-radius: 3px; }
+    
+    .grid-cols-6 .emp-size .product-name { font-size: 8px; color: #475569; margin-bottom: 1px; font-weight: 800; line-height: 1; }
+    .grid-cols-6 .emp-size .product-spec { font-size: 14px; padding: 2px 6px; border-radius: 3px; }
+    .grid-cols-6 .emp-size .cust-badge { font-size: 8px; padding: 1px 3px; border-radius: 3px; }
+    
+    /* ULTRA-SIZE */
+    .grid-cols-6 .ultra-size .product-spec { font-size: 16px !important; padding: 3px 8px !important; }
     .empty-state {
       grid-column: span 6;
       text-align: center;
@@ -808,14 +864,14 @@
       { id: Date.now() + 3, emphasis: 'emp-size', theme: 'theme-tools', category: 'Hex Bolts', brand: 'TVS', name: 'Machine Bolt', spec: '1.5 Sut x 2"', custNo: '12no' }
     ];
 
-    function renderGrid() {
+   function renderGrid() {
       const grid = document.getElementById('labelGrid');
       const countDisplay = document.getElementById('countDisplay');
       const mobileCountDisplay = document.getElementById('mobileCountDisplay');
       
       grid.innerHTML = '';
       countDisplay.innerText = labelQueue.length;
-      mobileCountDisplay.innerText = labelQueue.length;
+      if (mobileCountDisplay) mobileCountDisplay.innerText = labelQueue.length;
 
       if (labelQueue.length === 0) {
         grid.innerHTML = '<div class="empty-state">No labels in queue. Add products using the left panel.</div>';
@@ -824,7 +880,15 @@
 
       labelQueue.forEach(item => {
         const card = document.createElement('div');
-        card.className = `sticker-card ${item.emphasis}`;
+        
+        // SMART DETECTOR: If no category, no brand, and no customer number, enable ULTRA-SIZE!
+        const isMinimal = (!item.category || item.category === '') && 
+                          (!item.brand || item.brand === '') && 
+                          (!item.custNo || item.custNo === '');
+                          
+        const ultraClass = (isMinimal && item.emphasis === 'emp-size') ? 'ultra-size' : '';
+        
+        card.className = `sticker-card ${item.emphasis} ${ultraClass}`;
         
         let topBarHtml = '';
         if (item.theme !== 'theme-none' || item.category || item.brand) {
@@ -841,13 +905,16 @@
           custBadgeHtml = `<div class="cust-badge">${item.custNo}</div>`;
         }
 
+        // Auto-spacing around 'x' or 'X' (e.g., "1x10" -> "1 x 10")
+        const formattedSpec = item.spec.replace(/(\d)\s*([xX])\s*(\d)/g, '$1 x $3');
+
         card.innerHTML = `
           <button class="btn-delete" onclick="deleteLabel(${item.id})" title="Remove Label">×</button>
           ${topBarHtml}
           <div class="product-info">
             <div class="product-name">${item.name}</div>
             <div class="spec-container">
-              <div class="product-spec">${item.spec}</div>
+              <div class="product-spec">${formattedSpec}</div>
               ${custBadgeHtml}
             </div>
           </div>
